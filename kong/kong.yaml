@@ -1,0 +1,181 @@
+_format_version: "3.0"
+
+################################################################################
+# Service + Route
+################################################################################
+services:
+  - name: openai-service
+    url: https://api.openai.com
+
+routes:
+  - name: openai-responses
+    paths: ["/responses"]
+    service:
+      name: openai-service
+  - name: openai-chat
+    paths: ["/chat"]
+    service:
+      name: openai-service 
+
+################################################################################
+# Plugins
+################################################################################
+
+plugins:
+# --- AI Proxy: on /chat endpoint -------------------------------------------
+  - name: ai-proxy
+    route: openai-chat
+    config:
+      route_type: llm/v1/chat
+      auth:
+        header_name: Authorization
+        header_value: "Bearer ${OPENAI_API_KEY}"
+      model:
+        provider: openai
+        name: gpt-4o
+        options:
+          max_tokens: 1024
+          temperature: 0.7
+# --- AI Proxy Advanced: on /responses endpoint -------------------------
+  - name: ai-proxy-advanced
+    route: openai-responses
+    config:
+      balancer:
+        algorithm: semantic
+      embeddings:
+        auth:
+          header_name: Authorization
+          header_value: "Bearer ${OPENAI_API_KEY}"
+        model:
+          provider: openai
+          name: text-embedding-3-small
+          options:
+            upstream_url: https://api.openai.com/v1/embeddings
+      vectordb:
+        strategy: redis
+        distance_metric: cosine
+        dimensions: 1536            
+        threshold: 0.9              
+        redis:
+          host: ${REDIS_HOST}
+          port: ${REDIS_PORT}
+          username: ${REDIS_USERNAME}
+          password: ${REDIS_PASSWORD}
+
+      targets:
+        - model:
+            provider: openai
+            name: ft:gpt-4o-2024-08-06:personal:v2bankingcx:CCaAkS4i
+            options:
+              max_tokens: 826
+              temperature: 0
+          route_type: llm/v1/responses
+          auth:
+            header_name: Authorization
+            header_value: "Bearer ${OPENAI_API_KEY}"
+          description: >-
+            Questions about the bank or the cards.
+
+        - model:
+            provider: openai
+            name: ft:gpt-4o-2024-08-06:personal:v2mortgageassistant:CCaGDBPg
+            options:
+              max_tokens: 512
+              temperature: 0.3
+          route_type: llm/v1/responses
+          auth:
+            header_name: Authorization
+            header_value: "Bearer ${OPENAI_API_KEY}"
+          description: >-
+            Questions about mortgages and payoffs.
+
+        - model:
+            provider: openai
+            name: gpt-4o-mini
+            options:
+              max_tokens: 256
+              temperature: 1.0
+          route_type: llm/v1/responses
+          auth:
+            header_name: Authorization
+            header_value: "Bearer ${OPENAI_API_KEY}"
+          description: CATCHALL fallback for anything else
+
+# --- Semantic Cache on Chat Endpoint --------------
+  - name: ai-semantic-cache
+    route: openai-chat
+    config:
+      embeddings:
+        auth:
+          header_name: Authorization
+          header_value: "Bearer ${OPENAI_API_KEY}"
+        model:
+          provider: openai
+          name: text-embedding-3-small
+          options:
+            upstream_url: https://api.openai.com/v1/embeddings
+      vectordb:
+        strategy: redis
+        dimensions: 1536
+        distance_metric: cosine
+        threshold: 0.4
+        redis:
+          host: ${REDIS_HOST}
+          port: ${REDIS_PORT}
+          username: ${REDIS_USERNAME}
+          password: ${REDIS_PASSWORD}
+
+# --- Semantic Prompt Guard on /Chat Endpoint ---------
+  - name: ai-semantic-prompt-guard
+    route: openai-chat
+    config:
+      embeddings:
+        auth:
+          header_name: Authorization
+          header_value: "Bearer ${OPENAI_API_KEY}"
+        model:
+          provider: openai
+          name: text-embedding-3-small
+      search:
+        threshold: 0.7
+      vectordb:
+        strategy: redis
+        distance_metric: cosine
+        threshold: 0.5
+        dimensions: 1536
+        redis:
+          host: ${REDIS_HOST}
+          port: ${REDIS_PORT}
+          username: ${REDIS_USERNAME}
+          password: ${REDIS_PASSWORD}
+      rules:
+        match_all_conversation_history: true
+        deny_prompts:
+          - Sports
+          - Politics
+          - Religion
+          - Violence
+
+# --- AI Rate Limiting Advanced on /Chat Endpoint ------------------------------------------------
+  - name: ai-rate-limiting-advanced
+    route: openai-chat
+    config:
+      strategy: redis
+      redis:
+        host: ${REDIS_HOST}
+        port: ${REDIS_PORT}
+        username: ${REDIS_USERNAME}
+        password: ${REDIS_PASSWORD}
+      sync_rate: 0
+      llm_providers:
+        - name: requestPrompt
+          limit: [1000000, 10000000]
+          window_size: [60, 3600]
+        - name: openai
+          limit: [1000000, 10000000]
+          window_size: [60, 3600]
+      request_prompt_count_function: |
+        local n = tonumber(kong.request.get_header('x-prompt-count'))
+        if n then return n end
+        return 0
+      tokens_count_strategy: total_tokens

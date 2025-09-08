@@ -1,0 +1,207 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-09-08T05:12:42Z",
+  "__export_source": "chatgpt:kong-redis-banking-demo",
+  "resources": [
+    {
+      "_id": "wrk_d2008f4157f44",
+      "created": 1757308362554,
+      "description": "Kong AI Gateway + Redis Banking Demo —  collection",
+      "modified": 1757308362554,
+      "name": "Kong + Redis Banking Demo",
+      "parentId": null,
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_8139d6ae76374",
+      "_type": "environment",
+      "parentId": "wrk_d2008f4157f44",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8000",
+        "openai_api_key": "sk-proj-REPLACE_ME"
+      }
+    },
+    {
+      "_id": "fld_ca61cb820ca44",
+      "_type": "request_group",
+      "parentId": "wrk_d2008f4157f44",
+      "name": "Demo Requests (Run in Order)",
+      "environment": {},
+      "metaSortKey": -1000000000.0
+    },
+    {
+      "_id": "req_a2b753a256624",
+      "_type": "request",
+      "parentId": "fld_ca61cb820ca44",
+      "name": "1) Routing → Retail Banking LLM (AI Proxy Advanced)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/responses",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"input\":[{\"role\":\"user\",\"content\":\"What are the London bank branch hours on Saturday?\"}]}"
+      },
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.openai_api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "metaSortKey": 1000
+    },
+    {
+      "_id": "req_9e4f7706af424",
+      "_type": "request",
+      "parentId": "fld_ca61cb820ca44",
+      "name": "2) Routing → Mortgage LLM (AI Proxy Advanced)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/responses",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"input\":[{\"role\":\"user\",\"content\":\"Estimate the monthly payment for a $420,000 mortgage, 30 years at 6.125%, and roughly how much interest in year one.\"}]}"
+      },
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.openai_api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "metaSortKey": 900
+    },
+    {
+      "_id": "req_9461612f568a4",
+      "_type": "request",
+      "parentId": "fld_ca61cb820ca44",
+      "name": "3) Semantic Cache → Original",
+      "method": "POST",
+      "url": "{{ _.base_url }}/chat",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"messages\":[{\"role\":\"user\",\"content\":\"What are the benefits of having a checking account?\"}]}"
+      },
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.openai_api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "metaSortKey": 800
+    },
+    {
+      "_id": "req_5ef37f709ffa4",
+      "_type": "request",
+      "parentId": "fld_ca61cb820ca44",
+      "name": "4) Semantic Cache → Near-Duplicate (expect HIT)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/chat",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"messages\":[{\"role\":\"user\",\"content\":\"Advantages of a checking account?\"}]}"
+      },
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.openai_api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "metaSortKey": 700
+    },
+    {
+      "_id": "req_e421aff402cb4",
+      "_type": "request",
+      "parentId": "fld_ca61cb820ca44",
+      "name": "5) Prompt Guard → Off-topic (expect block)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/chat",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"messages\":[{\"role\":\"user\",\"content\":\"Best football team to gamble on?\"}]}"
+      },
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.openai_api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "metaSortKey": 600
+    },
+    {
+      "_id": "req_866154d360e94",
+      "_type": "request",
+      "parentId": "fld_ca61cb820ca44",
+      "name": "6) Rate Limiting → Force 429 (x-prompt-count)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/chat",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"messages\":[{\"role\":\"user\",\"content\":\"Hello\"}]}"
+      },
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.openai_api_key }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "x-prompt-count",
+          "value": "1444555"
+        }
+      ],
+      "parameters": [],
+      "metaSortKey": 500
+    }
+  ]
+}

@@ -82,7 +82,7 @@ cp .env.example .env
 ## 5) Bootstrap
 
 ```bash
-chmod +x scripts/*.sh tests/*.sh
+chmod +x scripts/*.sh
 bash ./scripts/bootstrap.sh
 ```
 
@@ -93,11 +93,14 @@ Bootstrap will:
 - Enable /chat with the four plugins
 
 ## 6) Verify
+### Docker
+Verify container named kong-quickstart is running.
 
-Docker: container named kong-quickstart is running.
-
-Konnect: Gateway Manager → your quickstart runtime has /chat route with the plugins enabled.
-
+### Kong Gateway
+1. Verify Gateway "quickstart" exists in Kong Konnect 
+![Kong Gateway](gateway.png "Gateway")
+1. Verify all Plugins exist on "quickstart" gateway in Kong Konnect 
+![Kong Plugins](kongPlugins.png "Plugins")
 
 ## 8) Demo with Insomnia 
 

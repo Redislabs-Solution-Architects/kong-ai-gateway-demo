@@ -151,10 +151,10 @@ plugins:
       rules:
         match_all_conversation_history: true
         deny_prompts:
-          - Sports
-          - Politics
-          - Religion
-          - Violence
+          - Sports topics
+          - Politics topics
+          - Religion topics
+          - Violence topics
 
 # --- AI Rate Limiting Advanced on /Chat Endpoint ------------------------------------------------
   - name: ai-rate-limiting-advanced

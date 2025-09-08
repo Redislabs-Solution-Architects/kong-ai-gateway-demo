@@ -48,9 +48,9 @@ fi
 echo "Checking required environment variables..."
 require_env DECK_KONNECT_TOKEN
 echo "✓ DECK_KONNECT_TOKEN verified"
-: "${DECK_KONNECT_CONTROL_PLANE_NAME:=quickstart}"
-: "${KONNECT_CONTROL_PLANE_URL:=https://us.api.konghq.com}"
-: "${KONNECT_PROXY_URL:=http://localhost:8000}"
+: "${DECK_KONNECT_CONTROL_PLANE_NAME}"
+: "${KONNECT_CONTROL_PLANE_URL}"
+: "${KONNECT_PROXY_URL}"
 
 # OpenAI + Redis for your plugins  
 require_env OPENAI_API_KEY

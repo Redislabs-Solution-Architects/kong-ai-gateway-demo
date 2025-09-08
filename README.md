@@ -13,6 +13,10 @@ The demo uses two fine-tuned OpenAI models:
 - Retail Banking Assistant ("Anna")
 - Mortgage & Lending Assistant ("Lisa")
 
+
+![Architecture Diagram](KongRedisArchDemo.png "Kong Redis Demo Architecture")
+
+
 Data plane runs locally in Docker; control plane is Kong Konnect. Insomnia is optional for making requests.
 
 ## Prerequisites
@@ -56,20 +60,6 @@ Note it down.
 Two specialized models are required for this demo: a Retail Banking Assistant and a Mortgage & Lending Assistant.
 
 Access Fine Tune Models: https://platform.openai.com/finetune
-
-**For each model:**
-
-1. Click "Create"
-2. Configure the fine-tuning job:
-   - **Method:** Supervised
-   - **Base Model:** gpt-4o-2024-08-06 (or preferred model)
-   - **Suffix:** `retailBanking` (for Retail Banking Assistant) or `mortgageLending` (for Mortgage Assistant)
-   - **Training Data:** Upload corresponding file from `/finetune` folder:
-     - Retail Banking: `/finetune/CustomerSupportAssistant.jsonl`
-     - Mortgage Assistant: `/finetune/MortgageAssistant.jsonl`
-3. Click "Create"
-4. After validation and training completion, test models in Playground
-5. Note the generated model names
 
 ## 4) Configure environment
 

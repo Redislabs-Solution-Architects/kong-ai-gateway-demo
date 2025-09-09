@@ -68,7 +68,7 @@ plugins:
             name: ft:gpt-4o-2024-08-06:personal:v2bankingcx:CCaAkS4i
             options:
               max_tokens: 826
-              temperature: 0
+              temperature: 1.0
           route_type: llm/v1/responses
           auth:
             header_name: Authorization
@@ -81,7 +81,7 @@ plugins:
             name: ft:gpt-4o-2024-08-06:personal:v2mortgageassistant:CCaGDBPg
             options:
               max_tokens: 512
-              temperature: 0.3
+              temperature: 1.0
           route_type: llm/v1/responses
           auth:
             header_name: Authorization
@@ -151,13 +151,13 @@ plugins:
       rules:
         match_all_conversation_history: true
         deny_prompts:
-          - Sports topics
-          - Politics topics
-          - Religion topics
-          - Violence topics
+          - Sports teams
+          - Politics
+          - Religion
+          - Violence
 
 # --- AI Rate Limiting Advanced on /Chat Endpoint ------------------------------------------------
-  - name: ai-rate-limiting-advanced
+  - name: rate-limiting-advanced
     route: openai-chat
     config:
       strategy: redis
@@ -166,16 +166,9 @@ plugins:
         port: ${REDIS_PORT}
         username: ${REDIS_USERNAME}
         password: ${REDIS_PASSWORD}
-      sync_rate: 0
-      llm_providers:
-        - name: requestPrompt
-          limit: [1000000, 10000000]
-          window_size: [60, 3600]
-        - name: openai
-          limit: [1000000, 10000000]
-          window_size: [60, 3600]
-      request_prompt_count_function: |
-        local n = tonumber(kong.request.get_header('x-prompt-count'))
-        if n then return n end
-        return 0
-      tokens_count_strategy: total_tokens
+      identifier: ip          
+      window_type: sliding    
+      window_size: [20]       
+      limit: [5]               
+      sync_rate: 0             
+      hide_client_headers: false

@@ -40,7 +40,7 @@
       "url": "{{ _.base_url }}/responses",
       "body": {
         "mimeType": "application/json",
-        "text": "{\"input\":[{\"role\":\"user\",\"content\":\"What are the London bank branch hours on Saturday?\"}]}"
+        "text": "{\"input\":[{\"role\":\"user\",\"content\":\"WThe ATM at the store charged me a $3 fee. Why?\"}]}"
       },
       "headers": [
         {
@@ -91,12 +91,12 @@
       "_id": "req_9461612f568a4",
       "_type": "request",
       "parentId": "fld_ca61cb820ca44",
-      "name": "3) Semantic Cache → Original",
+      "name": "3) Prompt Guard → Off-topic (expect block)",
       "method": "POST",
       "url": "{{ _.base_url }}/chat",
       "body": {
         "mimeType": "application/json",
-        "text": "{\"messages\":[{\"role\":\"user\",\"content\":\"What are the benefits of having a checking account?\"}]}"
+        "text": "{\"messages\":[{\"role\":\"user\",\"content\":\"What is the best sports team to bet on?\"}]}"
       },
       "headers": [
         {
@@ -119,12 +119,12 @@
       "_id": "req_5ef37f709ffa4",
       "_type": "request",
       "parentId": "fld_ca61cb820ca44",
-      "name": "4) Semantic Cache → Near-Duplicate (expect HIT)",
+      "name": "4) Semantic Cache → Original",
       "method": "POST",
       "url": "{{ _.base_url }}/chat",
       "body": {
         "mimeType": "application/json",
-        "text": "{\"messages\":[{\"role\":\"user\",\"content\":\"Advantages of a checking account?\"}]}"
+        "text": "{\"messages\":[{\"role\":\"user\",\"content\":\"What are the benefits of having a checking account?\"}]}"
       },
       "headers": [
         {
@@ -147,12 +147,12 @@
       "_id": "req_e421aff402cb4",
       "_type": "request",
       "parentId": "fld_ca61cb820ca44",
-      "name": "5) Prompt Guard → Off-topic (expect block)",
+      "name": "5) Semantic Cache → Near-Duplicate (expect HIT)",
       "method": "POST",
       "url": "{{ _.base_url }}/chat",
       "body": {
         "mimeType": "application/json",
-        "text": "{\"messages\":[{\"role\":\"user\",\"content\":\"Best football team to gamble on?\"}]}"
+        "text": "{\"messages\":[{\"role\":\"user\",\"content\":\"Advantages of a checking account?\"}]}"
       },
       "headers": [
         {
@@ -175,7 +175,7 @@
       "_id": "req_866154d360e94",
       "_type": "request",
       "parentId": "fld_ca61cb820ca44",
-      "name": "6) Rate Limiting → Force 429 (x-prompt-count)",
+      "name": "6) Rate Limiting → Force 429",
       "method": "POST",
       "url": "{{ _.base_url }}/chat",
       "body": {
@@ -194,10 +194,6 @@
         {
           "name": "Accept",
           "value": "application/json"
-        },
-        {
-          "name": "x-prompt-count",
-          "value": "1444555"
         }
       ],
       "parameters": [],

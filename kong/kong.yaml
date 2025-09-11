@@ -65,7 +65,7 @@ plugins:
       targets:
         - model:
             provider: openai
-            name: ft:gpt-4o-2024-08-06:personal:v2bankingcx:CCaAkS4i
+            name: ${OPEN_AI_BANKING_CX_MODEL_NAME}
             options:
               max_tokens: 826
               temperature: 1.0
@@ -78,7 +78,7 @@ plugins:
 
         - model:
             provider: openai
-            name: ft:gpt-4o-2024-08-06:personal:v2mortgageassistant:CCaGDBPg
+            name: ${OPEN_AI_MORTGAGE_ASSISTANT_MODEL_NAME}
             options:
               max_tokens: 512
               temperature: 1.0
